@@ -1,0 +1,58 @@
+% pdflatex --shell-escape ./renderSatzung.tex
+
+\documentclass{article}
+
+% remove inserted paragraphes
+\usepackage{parskip}
+
+\usepackage{geometry}
+\geometry{a4paper, total={170mm,257mm}, left=20mm, top=20mm}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lxfonts}
+
+% fancyhdr is template with header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+
+% insert page count: render document twice!
+\usepackage{lastpage}
+
+\usepackage{markdown}
+
+\usepackage{titlesec}
+\titleformat{\section}[block]{\normalfont\LARGE\bfseries\centering}{}{1em}{}
+
+% First section number, second roman, third number, but not used. 
+\renewcommand{\thesection}{\arabic{section}}
+\renewcommand{\thesubsection}{\thesection.\Roman{subsection}}
+\renewcommand{\thesubsubsection}{\thesubsection.\arabic{subsubsection}}
+
+% remove number from \leftmark (first level section title in left header)
+\renewcommand{\sectionmark}[1]{\markboth{#1}{}} 
+
+% liststyle from bullet to dash
+\renewcommand\labelitemi{-}
+
+% justify, no word breaks
+\usepackage[none]{hyphenat}
+\emergencystretch=\maxdimen
+
+%clear head and footer fields
+\fancyhf{}
+\lhead{\leftmark}
+\rhead{\fontsize{7}{12} \selectfont Badminton-Landesverband Sachsen-Anhalt e. V.}
+\rfoot{\thepage\ / \pageref{LastPage}}
+
+\begin{document}
+
+% sections no leading number
+\makeatletter
+\renewcommand{\@seccntformat}[1]{}
+\makeatother
+\renewcommand{\numberline}[1]{}
+
+\markdownInput{sources/SatzungOrdnungen/Satzung.md}
+
+\end{document}

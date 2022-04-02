@@ -1,0 +1,191 @@
+% pdflatex --shell-escape ./renderOrdnungen.tex
+
+\documentclass{article}
+
+% remove inserted paragraphes
+\usepackage{parskip}
+
+\usepackage{geometry}
+\geometry{a4paper, total={170mm,257mm}, left=20mm, top=20mm}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lxfonts}
+
+% fancyhdr is template with header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+
+% insert page count: render document twice!
+\usepackage{lastpage}
+
+\usepackage{markdown}
+
+\usepackage{titlesec}
+\titleformat{\section}[block]{\normalfont\LARGE\bfseries\centering}{}{1em}{}
+
+% First section number, second roman, third number, but not used. 
+\renewcommand{\thesection}{\arabic{section}}
+\renewcommand{\thesubsection}{\thesection.\Roman{subsection}}
+\renewcommand{\thesubsubsection}{\thesubsection.\arabic{subsubsection}}
+
+% remove number from \leftmark (first level section title in left header)
+\renewcommand{\sectionmark}[1]{\markboth{#1}{}} 
+
+% liststyle from bullet to dash
+\renewcommand\labelitemi{-}
+
+% justify, no word breaks
+\usepackage[none]{hyphenat}
+\emergencystretch=\maxdimen
+
+%clear head and footer fields
+\fancyhf{}
+\lhead{\leftmark}
+\rhead{\fontsize{7}{12} \selectfont Badminton-Landesverband Sachsen-Anhalt e. V.}
+\rfoot{\thepage\ / \pageref{LastPage}}
+
+\title{Ordnungen Badminton-Landesverband Sachsen-Anhalt e. V.}
+\author{BLSA}
+\date{\today}
+
+% Set the contents header
+\renewcommand*\contentsname{}
+
+% table
+\usepackage{tabularx}
+\usepackage{ragged2e}
+
+\markdownSetup{pipeTables = true}
+
+\makeatletter
+\newcount\markdownLaTeXRowCounter
+\newcount\markdownLaTeXRowTotal
+\newcount\markdownLaTeXColumnCounter
+\newcount\markdownLaTeXColumnTotal
+\newtoks\markdownLaTeXTable
+\newtoks\markdownLaTeXTableAlignment
+\newtoks\markdownLaTeXTableEnd
+
+\markdownSetup{
+  renderers = {
+    table = {%
+      \markdownLaTeXTable={}%
+      \markdownLaTeXTableAlignment={}%
+      \markdownLaTeXTableEnd={%
+        \end{tabularx}%
+      }%
+      \ifx\empty#1\empty\else
+        \addto@hook\markdownLaTeXTable{%
+          \begin{table}
+          \caption{#1}
+          \centering
+        }%
+        \addto@hook\markdownLaTeXTableEnd{%
+          \end{table}%
+        }%
+      \fi
+      \addto@hook\markdownLaTeXTable{
+        \begin{tabularx}{\linewidth}%
+      }%
+      \markdownLaTeXRowCounter=0%
+      \markdownLaTeXRowTotal=#2%
+      \markdownLaTeXColumnTotal=#3%
+      \markdownLaTeXRenderTableRow
+    }
+  }
+}
+
+\def\markdownLaTeXRenderTableRow#1{%
+  \markdownLaTeXColumnCounter=0%
+  \ifnum\markdownLaTeXRowCounter=0\relax
+    \markdownLaTeXReadAlignments#1%
+    \markdownLaTeXTable=\expandafter\expandafter\expandafter{%
+      \expandafter\the\expandafter\markdownLaTeXTable\expandafter{%
+        \the\markdownLaTeXTableAlignment
+      }%
+    }%
+    \addto@hook\markdownLaTeXTable{\hline}%
+  \else
+    \markdownLaTeXRenderTableCell#1%
+    \addto@hook\markdownLaTeXTable{\hline}%
+  \fi
+  \advance\markdownLaTeXRowCounter by 1\relax
+  \ifnum\markdownLaTeXRowCounter>\markdownLaTeXRowTotal\relax
+    \expandafter\the\expandafter\markdownLaTeXTable
+    \the\markdownLaTeXTableEnd
+    \expandafter\@gobble
+  \fi\markdownLaTeXRenderTableRow
+}
+
+\def\markdownLaTeXReadAlignments#1{%
+  \advance\markdownLaTeXColumnCounter by 1\relax
+  \if#1d%
+    \addto@hook\markdownLaTeXTableAlignment{|X<{\RaggedRight}}%
+  \else
+    \addto@hook\markdownLaTeXTableAlignment{|#1<{\RaggedRight}}%
+  \fi
+  \ifnum\markdownLaTeXColumnCounter<\markdownLaTeXColumnTotal
+    \relax
+  \else
+    \addto@hook\markdownLaTeXTableAlignment{|}%
+    \expandafter\@gobble
+  \fi\markdownLaTeXReadAlignments
+}
+
+% Header styling
+\def\headerStyle#1{{\sffamily\bfseries #1}}
+\def\markdownLaTeXRenderTableCell#1{%
+  \advance\markdownLaTeXColumnCounter by 1\relax
+  \ifnum\markdownLaTeXColumnCounter<\markdownLaTeXColumnTotal\relax
+    \ifnum\markdownLaTeXRowCounter=1\relax
+      \addto@hook\markdownLaTeXTable{\headerStyle{#1}&}%
+    \else
+      \addto@hook\markdownLaTeXTable{#1&}%
+    \fi
+  \else
+    \ifnum\markdownLaTeXRowCounter=1\relax
+      \addto@hook\markdownLaTeXTable{\headerStyle{#1}\\}%
+    \else
+      \addto@hook\markdownLaTeXTable{#1\\}%
+    \fi
+    \expandafter\@gobble
+  \fi\markdownLaTeXRenderTableCell
+}
+\begin{document}
+
+% sections no leading number
+\makeatletter
+\renewcommand{\@seccntformat}[1]{}
+\makeatother
+\renewcommand{\numberline}[1]{}
+
+\section*{Ordnungen Badminton-Landesverband Sachsen-Anhalt e. V.}
+\tableofcontents
+\newpage
+
+\markdownInput{sources/SatzungOrdnungen/OrdnungSpiel.md}
+\newpage
+\markdownInput{sources/SatzungOrdnungen/OrdnungSpielAnlageI.md}
+\newpage
+\markdownInput{sources/SatzungOrdnungen/OrdnungSpielAnlageII.md}
+\newpage
+\markdownInput{sources/SatzungOrdnungen/OrdnungSpielAnlageIII.md}
+\newpage
+\markdownInput{sources/SatzungOrdnungen/OrdnungFinanzUndKassen.md}
+\newpage
+\markdownInput{sources/SatzungOrdnungen/OrdnungFinanzUndKassenAnlage.md}
+\newpage
+\markdownInput{sources/SatzungOrdnungen/OrdnungJugend.md}
+\newpage
+\markdownInput{sources/SatzungOrdnungen/OrdnungSchiedsrichter.md}
+\newpage
+\markdownInput{sources/SatzungOrdnungen/OrdnungEhren.md}
+\newpage
+\markdownInput{sources/SatzungOrdnungen/OrdnungRechts.md}
+\newpage
+\markdownInput{sources/SatzungOrdnungen/OrdnungRechtsAnlage.md}
+\newpage
+\markdownInput{sources/SatzungOrdnungen/OrdnungGeschaefts.md}
+
+\end{document}

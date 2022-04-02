@@ -1,0 +1,10 @@
+*.log
+*.aux
+*.err
+*.lua
+*.out
+*.toc
+*.pdf
+*.fdb_latexmk
+*.fls
+_markdown_*/

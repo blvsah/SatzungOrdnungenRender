@@ -1,0 +1,3 @@
+[submodule "sources/SatzungOrdnungen"]
+	path = sources/SatzungOrdnungen
+	url = git@github.com:blvsah/SatzungOrdnungenTexte.git
