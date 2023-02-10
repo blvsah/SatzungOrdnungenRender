@@ -2,7 +2,7 @@
 
 ## LaTex installieren
 
-sudo apt install latexmk texlive-latex-extra
+sudo apt install latexmk texlive-latex-extra texlive-fonts-extra
 
 ## Pdf Rendern
 
