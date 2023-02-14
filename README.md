@@ -9,7 +9,7 @@ sudo apt install latexmk texlive-latex-extra texlive-fonts-extra
 ### Dieses Repository lokal clonen
 
 ```sh
-git clone ...
+git clone --recurse-submodules git@github.com:blvsah/SatzungOrdnungenRender.git
 ```
 
 ### Satzungs und Ordnungstexte im submodule aus dem externen Repository aktualisieren
